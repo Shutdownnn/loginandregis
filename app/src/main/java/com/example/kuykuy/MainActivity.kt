@@ -52,26 +52,31 @@ class MainActivity : AppCompatActivity() {
     private fun loginEmail(){
         email = txtEmail!!.text.toString()
         password = txtPassword!!.text.toString()
-        mAuth!!.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-                task -> if(task.isSuccessful){
-                Log.d("MyApp","Create New User Success!")
-                val user = mAuth!!.currentUser
-                updateUI(user)
-        } else{
-            Log.w("MyApp","Failure Process!",task.exception)
-            Toast.makeText(this@MainActivity,"Authentication Failed",Toast.LENGTH_SHORT).show()
-            updateUI(null)
-        }
+
+        if (email.isNotEmpty() && password.isNotEmpty()) {
+
+            mAuth!!.signInWithEmailAndPassword(email, password).addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    Log.d("MyApp","Create New User Success!")
+                    val user = mAuth!!.currentUser
+                    updateUI(user)
+                    } else{
+                        Log.w("MyApp","Failure Process!",task.exception)
+                        Toast.makeText(this@MainActivity,"Authentication Failed",Toast.LENGTH_SHORT).show()
+                        updateUI(null)
+                }
+            }
+        }else {
+            Toast.makeText(this, "Empty Fields Are not Allowed !!", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun updateUI(user: FirebaseUser?){
         if(user != null){
-            val uid = user.uid
             val email = user.email
-            Toast.makeText(this@MainActivity,"Welcome: $email your ID is : $uid",Toast.LENGTH_SHORT).show()
-            val intentSession = Intent(this,List::class.java)
-            startActivity(intentSession)
+            Toast.makeText(this@MainActivity,"Welcome: $email",Toast.LENGTH_SHORT).show()
+            val intent = Intent(this,List::class.java)
+            startActivity(intent)
         }
     }
 }
